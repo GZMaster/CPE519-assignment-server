@@ -124,7 +124,7 @@ const ImediateVerify = async (otp, id) => {
     user.verified = true;
   }
 
-  await user.save({ validateBeforeSave: false });s
+  await user.save({ validateBeforeSave: false });
 
   return true;
 };
