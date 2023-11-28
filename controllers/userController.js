@@ -104,6 +104,31 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
   });
 });
 
+const ImediateVerify = async (otp, id) => {
+  const user = await User.findById(id);
+
+  if (!user) {
+    return false;
+  }
+
+  if (user.otp !== otp) {
+    return false;
+  }
+
+  if (user.otp === otp && user.verified === true) {
+    return false;
+  }
+
+  if (user.otp === otp) {
+    user.otp = undefined;
+    user.verified = true;
+  }
+
+  await user.save({ validateBeforeSave: false });s
+
+  return true;
+};
+
 exports.signup = catchAsync(async (req, res, next) => {
   const otp = generateOtp();
 
@@ -124,9 +149,8 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   // Remove the password and otp from the output
   newUser.password = undefined;
-  newUser.otp = undefined;
 
-  //   const { token, cookieOptions } = createSendToken(newUser);
+  const { token, cookieOptions } = createSendToken(newUser);
 
   //   const sendingMail = await sendEmail(newUser.email, otp);
 
@@ -136,8 +160,11 @@ exports.signup = catchAsync(async (req, res, next) => {
   //   }
 
   // verify user imidiately
-  newUser.verified = true;
-  await newUser.save({ validateBeforeSave: false });
+  const verified = await ImediateVerify(`${otp}`, newUser._id);
+
+  if (verified === false) {
+    return next(new AppError("Error verifying email", 500));
+  }
 
   res.status(201).json({
     status: "success",
@@ -204,7 +231,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
-  if (!currentUser) {
+  if (!currentUser && !currentAdmin) {
     return next(
       new AppError(
         "The user belonging to this token does no longer exist.",
