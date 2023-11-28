@@ -204,8 +204,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
-  const currentAdmin = await Admin.findById(decoded.id);
-  if (!currentUser && !currentAdmin) {
+  if (!currentUser) {
     return next(
       new AppError(
         "The user belonging to this token does no longer exist.",
@@ -222,7 +221,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // }
 
   // GRANT ACCESS TO PROTECTED ROUTE
-  req.user = currentUser || currentAdmin;
+  req.user = currentUser;
   next();
 });
 

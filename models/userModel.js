@@ -49,7 +49,6 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
-  department: departmentSchema,
 });
 
 // Encrypt the user password before saving the user to the database
@@ -86,8 +85,6 @@ userSchema.methods.changedPasswordAfter = async function (tokenIssuedAt) {
   // False means NOT changed
   return false;
 };
-
-admin;
 
 const User = mongoose.model("User", userSchema);
 

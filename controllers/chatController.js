@@ -3,7 +3,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 const multer = require("multer");
 const OpenAI = require("openai");
-const { Chat, Message, BotResponse, Score } = require("../models/chatModel");
+const { Chat, Message, BotResponse } = require("../models/chatModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const ApiFeatures = require("../utils/apiFeatures");
@@ -241,5 +241,3 @@ exports.getResponse = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-
