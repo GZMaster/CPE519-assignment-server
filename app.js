@@ -6,8 +6,8 @@ const morgan = require("morgan");
 const cors = require("cors"); // External middleware for handling Cross-Origin Resource Sharing (CORS)
 const AppError = require("./utils/appError"); // Custom error handling utility
 const globalErrorHandler = require("./controllers/errorController"); // Custom error handling middleware
-// const userRouter = require("./routes/userRoutes");
-// const chatRouter = require("./routes/chatRoutes");
+const userRouter = require("./routes/userRoutes");
+const chatRouter = require("./routes/chatRoutes");
 
 // Create a new instance of the Express application
 const app = express();
@@ -72,8 +72,8 @@ app.use(
 );
 
 // Routes for handling user requests
-// app.use("/api/v1/users", userRouter);
-// app.use("/api/v1/chats", chatRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/chats", chatRouter);
 
 // Handle all undefined routes by throwing a custom error with a 404 status code
 app.all("*", (req, res, next) => {
